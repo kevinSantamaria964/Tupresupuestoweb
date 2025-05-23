@@ -1,0 +1,411 @@
+﻿@{
+    ViewBag.Title = "Dashboard de Usuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="content px-3 py-5" style="
+    background: linear-gradient(to bottom, #f76b1c, #e94469, #b03b8c, #5e2a7e, #2b1d3c, #000000);
+    min-height: calc(100vh - 70px);
+    border-radius: 2rem;
+    color: white;
+    margin-top: 30px;
+">
+
+    <div class="container-fluid">
+
+        <!-- Encabezado -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex justify-content-between align-items-center bg-white apple-header">
+            <div class="d-flex align-items-center gap-4">
+                <div class="emoji fs-1">👋</div>
+                <div>
+                    <h1 class="mb-0 fw-bold text-dark">
+                        Hola,  <span class="d-inline-flex align-items-center gap-2">
+                            <img src="~/Content/Images/verificado.png" alt="Verificado" style="width: 35px; height: 28px;">
+                            @Session["Username"]
+                        </span>
+                    </h1>
+                    <h1 class="titulo-degradado">Bienvenido de nuevo</h1>
+
+                    <style>
+                        .titulo-degradado {
+                            font-size: 2rem;
+                            font-weight: bold;
+                            background: linear-gradient(90deg, #007aff, /* azul Apple */
+                            #5e5ce6, /* morado */
+                            #af52de, /* fucsia */
+                            #ff2d55, /* rosa fuerte */
+                            #ff3b30 /* rojo/naranja */
+                            );
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            /* background-clip sin prefijo se puede omitir si da error */
+                            color: transparent;
+                        }
+                    </style>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-4">
+                <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100"
+                     alt="Foto de perfil"
+                     class="rounded-circle shadow-sm"
+                     style="width: 72px; height: 72px; object-fit: cover;">
+                <div class="text-end">
+                    <p class="mb-1 fw-bold text-dark fs-5">@Session["Username"]</p>
+                    <a href="@Url.Action("Perfil", "Account")" class="btn btn-primary ms-2" rounded-pill px-4">
+                        👤 Ver perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta contenedora tipo Apple -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm bg-white apple-header">
+
+            <!-- Título centrado, negro y en negrilla -->
+            <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
+                <h2 class="fw-bold text-dark m-0" style="font-size: 2.8rem;">Comienzo</h2>
+                <span style="font-size: 2.8rem;">🚀</span>
+            </div>
+
+            <div class="row align-items-center">
+                <!-- Columna izquierda: imagen más grande -->
+                <div class="col-lg-6 text-center mb-4 mb-lg-0">
+                    <img src="~/Content/Images/introduccionusuario.png"
+                         alt="Gestión financiera"
+                         class="img-fluid"
+                         style="max-width: 100%;">
+                </div>
+
+                <!-- Columna derecha: texto y botón -->
+                <div class="col-lg-6 text-center text-lg-start">
+                    <a href="#acciones" class="btn btn-primary fw-bold px-5 py-3 fs-4 rounded-3">
+                        🡺 Empieza ahora y toma el control del dinero
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <style>
+            html {
+                scroll-behavior: smooth;
+            }
+
+            .titulo-transacciones {
+                font-size: 2.5rem; /* más grande que h3 */
+                font-weight: 800; /* más negrita */
+                color: #1a1a1a; /* color oscuro profesional */
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+            }
+
+            .emoji {
+                font-size: 2.7rem;
+            }
+        </style>
+
+
+
+
+
+
+        <div class="dashboard-main container my-5">
+            <!-- Resumen Financiero -->
+            <div class="financial-summary row text-center g-4 mb-5">
+                <!-- Balance Total -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-lg rounded-4 p-4 h-100 bg-white position-relative">
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <div class="icon-circle bg-primary text-white fs-4">📊</div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="text-uppercase text-muted fw-bold mb-2">Balance Total</h6>
+                            <h2 class="fw-bold text-dark display-6 mb-1">
+                                <span id="balanceTotal">0</span>
+                            </h2>
+                            <p class="text-secondary small">Balance actual del período</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingresos Totales -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-lg rounded-4 p-4 h-100 bg-white position-relative">
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <div class="icon-circle bg-success text-white fs-4">💰</div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="text-uppercase text-muted fw-bold mb-2">Ingresos Totales</h6>
+                            <h2 class="fw-bold text-success display-6 mb-1">
+                                +<span id="ingresosTotales">0</span>
+                            </h2>
+                            <p class="text-success small">⬆ 12% respecto al mes pasado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gastos Totales -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-lg rounded-4 p-4 h-100 bg-white position-relative">
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <div class="icon-circle bg-danger text-white fs-4">💸</div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="text-uppercase text-muted fw-bold mb-2">Gastos Totales</h6>
+                            <h2 class="fw-bold text-danger display-6 mb-1">
+                                −<span id="gastosTotales">0</span>
+                            </h2>
+                            <p class="text-danger small">⬇ 8% menos que el mes pasado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Botones inferiores -->
+            <div class="text-center mt-5 mb-5 d-flex justify-content-center gap-3 flex-wrap">
+
+
+
+
+
+                <!-- Filtros del Dashboard -->
+                <div class="filter-container mb-4 p-4 bg-light rounded-4 shadow-sm fw-bold text-dark">
+                    <label for="filtroPeriodo" class="form-label">Ver por:</label>
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <select id="filtroPeriodo" class="form-select w-auto">
+                            <option value="dia">Hoy</option>
+                            <option value="semana">Esta semana</option>
+                            <option value="mes" selected>Este mes</option>
+                            <option value="anio">Este año</option>
+                            <option value="personalizado">Personalizado</option>
+                        </select>
+
+                        <div id="filtrosPersonalizados" class="d-flex align-items-center gap-2" style="display: none;">
+                            <label class="form-label m-0">Desde:</label>
+                            <input type="date" id="desde" class="form-control form-control-sm" />
+                            <label class="form-label m-0">Hasta:</label>
+                            <input type="date" id="hasta" class="form-control form-control-sm" />
+                            <button class="btn btn-primary ms-2" onclick="actualizarDashboard()">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Gráfico de Barras -->
+            <div class="dashboard-charts">
+                <h3>📊 Gráfico de Ingresos y Gastos</h3>
+                <canvas id="financialChart"></canvas>
+            </div>
+
+            <!-- Gráfico Doughnut -->
+            <div class="chart-proporcion-wrapper">
+                <h5>📎 Distribución de Ingresos vs Gastos</h5>
+                <canvas id="proporcionChart"></canvas>
+            </div>
+
+            <!-- Tabla de Transacciones Recientes -->
+            <div class="recent-transactions mb-5">
+                <h2 class="titulo-transacciones mb-4">
+                    <span class="emoji">🧾</span>
+                    Tabla Transacciones Recientes
+                </h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Categoría</th>
+                                <th>Cantidad</th>
+                                <th>Tipo</th>
+                                <th>ID</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaTransacciones">
+                            <!-- Se llena dinámicamente desde JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tarjeta contenedora tipo Apple -->
+            <div class="rounded-4 p-5 mb-5 shadow-sm bg-white apple-header">
+                <!-- Título -->
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <span style="font-size: 3rem;">🛠️</span>
+                    <h2 class="titulo-degradado m-0 fw-bold" style="font-size: 3rem;">Otras funciones</h2>
+                </div>
+
+                <!-- Contenido dividido en dos columnas -->
+                <div class="row align-items-center">
+                    <!-- Columna izquierda: botones -->
+                    <div class="col-lg-6 d-flex flex-column gap-3 mb-4 mb-lg-0">
+                        <a href="@Url.Action("Movimientos", "Transacciones")"
+                           class="btn px-5 py-3 fw-bold shadow"
+                           style="background-color: #fdd835; color: #212121; border: none; border-radius: 1rem; font-size: 1.1rem;">
+                            📅 Ver Calendario de Movimientos
+                        </a>
+
+                        <a href="@Url.Action("ListaAsesores", "Chat")"
+                           class="btn px-5 py-3 fw-bold shadow"
+                           style="background-color: #42a5f5; color: white; border: none; border-radius: 1rem; font-size: 1.1rem;">
+                            💼 Contactar Asesor Financiero
+                        </a>
+
+                        <a href="@Url.Action("NotasUsuario", "Notas")"
+                           class="btn px-5 py-3 fw-bold shadow"
+                           style="background-color: #ff6b6b; color: white; border: none; border-radius: 1rem; font-size: 1.1rem;">
+                            📝 ¿Algo que recordar? Guárdalo aquí.
+                        </a>
+                    </div>
+
+                    <!-- Columna derecha: imagen más grande -->
+                    <div class="col-lg-6 text-center">
+                        <img src="~/Content/Images/imagencolombia.jpg"
+                             alt="Otras Funciones"
+                             style="width: 100%; max-width: 700px; height: auto;" />
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <!-- Tarjeta general de acciones -->
+
+            <div id="acciones" class="rounded-4 p-5 mb-5 shadow-sm bg-white apple-header">
+                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-4">
+
+                    <!-- Sección de información -->
+                    <div class="text-center text-lg-start">
+                        <h2 class="fw-bold mb-2" style="font-size: 2.5rem; color: #000000;">
+                            ⚡ Agregar Transacciones
+                        </h2>
+
+                        <img src="~/Content/Images/informacioningresos.png" alt="Presupuesto actualizado" class="img-fluid" style="max-width: 500px;">
+                    </div>
+
+                    <!-- Enlaces rápidos -->
+                    <div class="quick-links d-flex flex-wrap gap-3 justify-content-center mt-4">
+                        <a href="@Url.Action("AgregarIngreso", "Transacciones")"
+                           class="btn btn-success rounded-pill shadow-sm"
+                           style="font-size: 1.5rem; padding: 1rem 3rem;">
+                            ➕ Agregar Ingreso
+                        </a>
+                        <a href="@Url.Action("AgregarGasto", "Transacciones")"
+                           class="btn btn-danger rounded-pill shadow-sm"
+                           style="font-size: 1.5rem; padding: 1rem 3rem;">
+                            ➖ Agregar Gasto
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- Eliminación manual -->
+        <!-- Tarjeta general de acciones -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm bg-white apple-header">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center gap-4">
+
+                <!-- Sección de información -->
+                <div class="text-center text-lg-start">
+                    <h2 class="fw-bold mb-2" style="font-size: 2.5rem; color: #000000;">
+                        🗑️ Eliminar Transacción Manualmente
+                    </h2>
+                    <img src="~/Content/Images/eliminartransaccion.png" alt="Presupuesto actualizado" class="img-fluid" style="max-width: 500px;">
+                </div>
+
+                <div class="row justify-content-center g-4">
+                    <!-- Tarjeta: Eliminar Ingreso -->
+                    <div class="col-md-6 col-lg-5 d-flex justify-content-center">
+                        <div class="card border-success shadow-sm rounded-4 w-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-success mb-3 fw-semibold">Eliminar Ingreso</h5>
+                                <form id="formEliminarIngreso" onsubmit="return enviarEliminacionManual('ingreso')">
+                                    <div class="mb-3 text-start">
+                                        <label for="idIngreso" class="form-label">ID del Ingreso</label>
+                                        <input type="number" class="form-control form-control-lg rounded-3" id="idIngreso" placeholder="Ej: 101" required />
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-lg rounded-pill w-100">Eliminar Ingreso</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta: Eliminar Gasto -->
+                    <div class="col-md-6 col-lg-5 d-flex justify-content-center">
+                        <div class="card border-danger shadow-sm rounded-4 w-100">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-danger mb-3 fw-semibold">Eliminar Gasto</h5>
+                                <form id="formEliminarGasto" onsubmit="return enviarEliminacionManual('gasto')">
+                                    <div class="mb-3 text-start">
+                                        <label for="idGasto" class="form-label">ID del Gasto</label>
+                                        <input type="number" class="form-control form-control-lg rounded-3" id="idGasto" placeholder="Ej: 202" required />
+                                    </div>
+                                    <button type="submit" class="btn btn-danger btn-lg rounded-pill w-100">Eliminar Gasto</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Recomendación -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm bg-white apple-header">
+    
+            <!-- Título -->
+            <h2 class="fw-bold text-center mb-4" style="font-size: 2.5rem; color: #000000;">
+                🎯 informes del asesor financiero
+            </h2>
+
+            <div class="row align-items-center">
+                <!-- Columna izquierda: explicación + botón centrado -->
+                <div class="col-lg-5 d-flex flex-column justify-content-center align-items-lg-end align-items-center mb-4 mb-lg-0 pe-lg-5">
+
+
+
+                    <!-- Botón extra grande, más cerca del texto -->
+                    <a href="@Url.Action("VerReportes", "Transacciones")"
+                       class="btn btn-primary fw-bold"
+                       style="padding: 25px 40px; font-size: 2rem; border-radius: 1rem; box-shadow: 0 6px 12px rgba(0, 123, 255, 0.4); transition: background-color 0.3s ease;">
+                         Mis Reportes
+                    </a>
+                </div>
+
+
+                <!-- Imagen a la derecha -->
+                <div class="col-lg-6 text-center">
+                    <img src="~/Content/Images/misreportes.png"
+                         alt="Estadísticas PDF"
+                         class="img-fluid"
+                         style="max-width: 100%;">
+                </div>
+            </div>
+        </div>
+        
+
+
+        <!-- Toast container -->
+        <div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;"></div>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="@Url.Content("~/Scripts/dashboardUsuario.js")"></script>
+
+    </div>
+
+</main>
+

@@ -1,0 +1,58 @@
+﻿@model Tupresupuestoweb.Repositories.Models.PerfilViewModel
+
+@{
+    ViewBag.Title = "Mi Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-center align-items-center"
+     style=" min-height: 100vh; background: linear-gradient(to bottom right, #e1f3fc, #a8d8f4, #8dbcf7); border-radius: 2rem; padding: 2rem; margin-top: 30px; /* Más cerca del borde superior */ ">
+
+    <div class="p-5 shadow-sm"
+         style="
+             width: 100%;
+             max-width: 420px;
+             background-color: white;
+             border-radius: 2rem;
+         ">
+        <h1 class="text-center mb-4 fw-bold text-primary" style="font-size: 2rem;">
+            Mi Perfil
+        </h1>
+
+        <div class="perfil-info">
+            <p><strong>Nombre:</strong> @Model.Nombre</p>
+            <p><strong>Correo electrónico:</strong> @Model.Correo</p>
+            <p><strong>Usuario:</strong> @Model.Username</p>
+            <p><strong>Rol:</strong> @Model.Rol</p>
+        </div>
+
+        <div class="perfil-actions text-center mt-4">
+            <a href="@Url.Action("CambiarContraseña", "Account")" class="btn btn-outline-secondary mb-2">🔒 Cambiar contraseña</a>
+            <a href="@Url.Action("EditarPerfil", "Account")" class="btn btn-outline-primary mb-2">✏️ Editar perfil</a>
+        </div>
+        @{
+            string accion = "DashboardUsuario";
+            string controlador = "Home";
+
+            if (Model.Rol == "Administrador")
+            {
+                accion = "Usuarios";
+                controlador = "Admin";
+            }
+            else if (Model.Rol == "Contador")
+            {
+                accion = "DashboardContador";
+                controlador = "Home";
+            }
+        }
+
+        <div class="mt-4 text-center">
+            <a href="@Url.Action(accion, controlador)" class="btn btn-outline-secondary">🔙 Volver al Dashboard</a>
+        </div>
+
+    </div>
+</div>
+
+
+
+

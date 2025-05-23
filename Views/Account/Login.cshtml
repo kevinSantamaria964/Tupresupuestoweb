@@ -1,0 +1,90 @@
+﻿@model Tupresupuestoweb.Repositories.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Iniciar sesión";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom, #6699ff, #7faeff, #a8c8ff, #8db8ff); min-height: 100vh; border-radius: 2rem; margin-top: 30px; /* Más cerca del borde superior */ ">
+    <div class="login-container" style="
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 2rem;
+    ">
+        <h2 class="login-title">Iniciar sesión</h2>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Username)
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Username)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                <div style="position: relative;">
+                    <input type="password" id="passwordInput" name="Password" class="form-control" />
+                    <span onclick="togglePassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                        <i id="eyeIcon" class="fa fa-eye"></i>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary ms-2">Ingresar</button>
+                <button type="button" class="btn btn-primary ms-2" onclick="window.history.back();">Atrás</button>
+            </div>
+        }
+
+        <div class="forgot-password">
+            <a href="@Url.Action("ForgotPassword", "Account")">¿Olvidaste tu contraseña?</a>
+        </div>
+
+
+        <div class="forgot-password" style="margin-top: 1rem;">
+            <a href="@Url.Action("Register", "Account")">¿No tienes una cuenta? Crea una.</a>
+        </div>
+    </div>
+</main>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("passwordInput");
+        const eyeIcon = document.getElementById("eyeIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Estadísticas del Sistema";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin-estadisticas-container">
+    <h2>📊 Panel de Estadísticas</h2>
+    <p class="text-muted mb-4">Resumen general del uso del sistema</p>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="stat-card bg-primary text-white">
+                <h4>Total Usuarios</h4>
+                <p>@ViewBag.TotalUsuarios</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-success text-white">
+                <h4>Ingresos Registrados</h4>
+                <p>$@String.Format("{0:N0}", ViewBag.TotalIngresos)</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-danger text-white">
+                <h4>Gastos Registrados</h4>
+                <p>$@String.Format("{0:N0}", ViewBag.TotalGastos)</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-warning text-dark">
+                <h4>Más Popular</h4>
+                <p>@ViewBag.CategoriaPopular</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+

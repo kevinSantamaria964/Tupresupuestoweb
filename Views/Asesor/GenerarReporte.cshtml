@@ -1,0 +1,116 @@
+﻿@model Tupresupuestoweb.Models.ReporteMensajeViewModel
+
+@{
+    ViewBag.Title = "Generar Reporte";
+}
+
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom right, #fdf3b4, #f9c9a5, #f7b6d5, #d1c5e0, #b0d4e8, #666666); min-height: 100vh; border-radius: 2rem; margin-top: 30px; color: #333; ">
+
+    <div class="container px-5" style="margin-top: -30px;">
+
+        <!-- Encabezado con emoji -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex align-items-center gap-4 bg-white text-dark">
+            <div class="emoji fs-1">📝</div>
+            <div>
+                <h1 class="mb-0 fw-bold">Generar Reporte Personalizado</h1>
+                <h1 class="titulo-degradado">Crea reportes detallados con mensajes e imágenes</h1>
+
+                <style>
+                    .titulo-degradado {
+                        font-size: 2rem;
+                        font-weight: bold;
+                        background: linear-gradient(90deg, #007aff, /* azul Apple */
+                        #5e5ce6, /* morado */
+                        #af52de, /* fucsia */
+                        #ff2d55, /* rosa fuerte */
+                        #ff3b30 /* rojo/naranja */
+                        );
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        /* background-clip sin prefijo se puede omitir si da error */
+                        color: transparent;
+                    }
+                </style>
+            </div>
+        </div>
+
+        <!-- Mensajes de estado -->
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success">@TempData["Mensaje"]</div>
+        }
+
+        @if (TempData["ArchivoGenerado"] != null)
+        {
+            var nombreArchivo = TempData["ArchivoGenerado"] as string;
+            <a href="@Url.Action("DescargarReporte", "Asesor", new { nombreArchivo })" class="btn btn-success mb-4">Descargar Reporte</a>
+        }
+
+        <!-- Formulario -->
+        @using (Html.BeginForm("GenerarReporte", "Asesor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="mb-4">
+                @Html.LabelFor(m => m.UsuarioId, new { @class = "form-label fw-semibold" })
+                @Html.TextBoxFor(m => m.UsuarioId, new { @class = "form-control" })
+            </div>
+
+            <div class="mb-4">
+                @Html.LabelFor(m => m.Titulo, new { @class = "form-label fw-semibold" })
+                @Html.TextBoxFor(m => m.Titulo, new { @class = "form-control" })
+            </div>
+
+            <div class="mb-4">
+                @Html.LabelFor(m => m.Mensaje, new { @class = "form-label fw-semibold" })
+                @Html.TextAreaFor(m => m.Mensaje, new { @class = "form-control", rows = 10, id = "Mensaje" })
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Imágenes adjuntas (solo imágenes, puedes seleccionar varias)</label>
+                <input type="file" name="ImagenesAdjuntas" class="form-control" multiple accept="image/*" onchange="mostrarVistaPrevia(this)" />
+                <div id="vistaPrevia" class="mt-3 d-flex flex-wrap gap-2"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generar Reporte</button>
+        }
+
+    </div>
+</main>
+
+<!-- CKEditor 4 Full -->
+<script src="https://cdn.ckeditor.com/4.25.1/full/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('Mensaje', {
+        height: 300
+    });
+
+    function mostrarVistaPrevia(input) {
+        const vistaPrevia = document.getElementById('vistaPrevia');
+        vistaPrevia.innerHTML = '';
+
+        if (input.files) {
+            Array.from(input.files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const lector = new FileReader();
+                    lector.onload = function (e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxHeight = '150px';
+                        img.style.marginRight = '10px';
+                        img.style.border = '1px solid #ccc';
+                        img.style.borderRadius = '8px';
+                        vistaPrevia.appendChild(img);
+                    };
+                    lector.readAsDataURL(file);
+                }
+            });
+        }
+    }
+</script>
+
+
+
+
+
+
+
+

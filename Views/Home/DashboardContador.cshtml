@@ -1,0 +1,326 @@
+﻿@model IEnumerable<Tupresupuestoweb.Repositories.Models.TransaccionContadorViewModel>
+
+
+@{
+    ViewBag.Title = "Dashboard del Asesor Financiero";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var username = Session["Username"] as string ?? "Asesor";
+    int idRol = 0;
+    int.TryParse(Session["IdRol"]?.ToString(), out idRol);
+    bool esAsesor = idRol == 2 || idRol == 3;
+}
+
+
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom, #5c7fa3, /* Azul suave (menos saturado que #003366) */ #80a3c7, /* Azul claro */ #b5cee2, /* Azul cielo pastel */ #f5f1ea, /* Crema muy clara */ #ffe5a1, /* Amarillo pastel */ #ffd1a3 /* Naranja suave pastel */ ); min-height: 100vh; border-radius: 2rem; margin-top: 30px; ">
+
+
+
+    <div class="container-fluid">
+
+        <!-- Encabezado -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex justify-content-between align-items-center bg-white apple-header">
+            <!-- Parte izquierda: emoji y texto de bienvenida -->
+            <div class="d-flex align-items-center gap-4">
+                <div class="emoji fs-1">👋</div>
+                <div>
+                    <h1 class="mb-0 fw-bold text-dark">
+                        Hola,
+                        <span class="d-inline-flex align-items-center gap-2">
+                            <img src="~/Content/Images/verificado.png" alt="Verificado" style="width: 35px; height: 28px;">
+                            @Session["Username"]
+                        </span>
+                    </h1>
+                    <h1 class="titulo-degradado">Bienvenido de nuevo</h1>
+                </div>
+            </div>
+
+            <!-- Parte derecha: foto de perfil y botón -->
+            <div class="d-flex align-items-center gap-4">
+                <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100"
+                     alt="Foto de perfil"
+                     class="rounded-circle shadow-sm"
+                     style="width: 72px; height: 72px; object-fit: cover;">
+                <div class="text-end">
+                    <p class="mb-1 fw-bold text-dark fs-5">@Session["Username"]</p>
+                    <a href="@Url.Action("Perfil", "Account")" class="btn btn-primary ms-2" rounded-pill px-4">
+                        👤 Ver perfil
+                    </a>
+                </div>
+            </div>
+            </div>
+
+        <!-- Estilo degradado -->
+        <style>
+            .titulo-degradado {
+                font-size: 2rem;
+                font-weight: bold;
+                background: linear-gradient(90deg, #007aff, /* azul Apple */
+                #5e5ce6, /* morado */
+                #af52de, /* fucsia */
+                #ff2d55, /* rosa fuerte */
+                #ff3b30 /* rojo/naranja */
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: transparent;
+            }
+        </style>
+
+
+
+
+        <!-- Recomendación -->
+        <div class="advisor-recommendation mb-5 p-4 bg-white rounded-4 shadow-sm">
+            <div class="row align-items-center">
+                <!-- Columna izquierda: texto + imagen -->
+                <div class="col-lg-7 text-center text-lg-start">
+                    <h2 class="fw-bold mb-3" style="font-size: 2.5rem; color: #000000;">
+                        📄 Lista de usuarios y sus ID
+                    </h2>
+                    <img src="~/Content/Images/Imagenlistausuarios.jpg" alt="Presupuesto actualizado" class="img-fluid" style="max-width: 600px;">
+                </div>
+
+                <!-- Columna derecha: botón centrado verticalmente y un poco más a la izquierda -->
+                <div class="col-lg-5 d-flex justify-content-lg-start justify-content-center mt-4 mt-lg-0 ps-lg-5">
+                    <a href="@Url.Action("ListadoUsuarios", "Asesor")"
+                       class="btn btn-primary btn-lg"
+                       style="padding: 15px 30px; font-size: 1.5rem; font-weight: bold; box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); transition: background-color 0.3s ease;">
+                        Ver listado de usuarios
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- Recomendación -->
+        <div class="advisor-recommendation mb-5 p-4 bg-white rounded-4 shadow-sm">
+            <!-- Título -->
+            <h2 class="fw-bold text-center mb-4" style="font-size: 2.5rem; color: #000000;">
+                💬 Recomendación del Asesor
+            </h2>
+
+            <div class="row align-items-center">
+                <!-- Columna izquierda: botón centrado y desplazado un poco a la derecha -->
+                <div class="col-lg-5 d-flex justify-content-lg-end justify-content-center mb-4 mb-lg-0 pe-lg-5">
+                    <a href="@Url.Action("MisConversaciones", "Chat")"
+                       class="btn btn-primary btn-lg fw-bold"
+                       style="padding: 15px 30px; font-size: 1.5rem; box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); transition: background-color 0.3s ease;">
+                        Ver Mis Conversaciones
+                    </a>
+                </div>
+
+                <!-- Imagen a la derecha -->
+                <div class="col-lg-6 text-center">
+                    <img src="~/Content/Images/chat2cerditos.png"
+                         alt="Estadísticas PDF"
+                         class="img-fluid"
+                         style="max-width: 75%;">
+                </div>
+            </div>
+        </div>
+
+
+
+        @if (esAsesor)
+        {
+            <!-- 📂 Buscar Transacciones por Usuario -->
+            <div class="p-4 mb-5 bg-white rounded-4 shadow-sm">
+                <h2 class="fw-bold text-center mb-4" style="font-size: 2.5rem; color: #000000;">
+                    📂 Transacciones hechas por Usuario
+                </h2>
+
+                <div class="row align-items-center">
+                    <!-- Imagen a la izquierda -->
+                    <div class="col-lg-6 text-center">
+                        <img src="~/Content/Images/idintificaciondatos.png"
+                             alt="Presupuesto actualizado"
+                             class="img-fluid"
+                             style="max-width: 100%;">
+                    </div>
+
+                    <!-- Formulario a la derecha -->
+                    <div class="col-lg-6">
+                        <form method="get"
+                              action="@Url.Action("DashboardContadorUsuarios", "Asesor")"
+                              class="row g-3">
+
+                            <div class="col-12">
+                                <label for="idUsuario" class="form-label">ID Usuario</label>
+                                <input type="number" name="idUsuario" id="idUsuario" class="form-control" required />
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 fw-bold">🔍 Buscar</button>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- 📊 Ver Estadísticas del Usuario -->
+
+            <div class="p-4 mb-5 bg-white rounded-4 shadow-sm">
+                <h2 class="fw-bold text-center mb-4" style="font-size: 2.5rem; color: #000000;">
+                    📊 Estadisticas hechas por Usuario
+                </h2>
+
+                <div class="row align-items-center">
+                    <!-- Formulario a la izquierda -->
+                    <div class="col-lg-6">
+                        <form method="get" action="@Url.Action("EstadisticasUsuario", "Asesor")" class="row g-3">
+                            <div class="col-12">
+                                <label for="estadisticaId" class="form-label">ID de Usuario</label>
+                                <input type="number" class="form-control" id="estadisticaId" name="id" required />
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 fw-bold">🔍 Buscar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Imagen a la derecha -->
+                    <div class="col-lg-6 text-center">
+                        <img src="~/Content/Images/estadisticaspdf.png"
+                             alt="Estadísticas PDF"
+                             class="img-fluid"
+                             style="max-width: 100%;">
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 👥 Ver Usuarios Asignados -->
+            <div class="p-4 mb-5 bg-white rounded-4 shadow-sm">
+                <h4 class="fw-bold mb-4 text-center">👥 Ver Usuarios Asignados</h4>
+
+                <form method="get" action="@Url.Action("VerUsuariosAsignados", "Asesor")" class="row g-3 align-items-end justify-content-center mb-4">
+                    <div class="col-md-4">
+                        <label for="usuarioId" class="form-label">ID de Usuario</label>
+                        <input type="number" class="form-control" id="usuarioId" name="id" required />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">👨‍💼 Ver Usuarios Asignados</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 📄 Generar PDF -->
+            <div class="p-4 mb-5 bg-white rounded-4 shadow-sm">
+                <h2 class="fw-bold text-center mb-4" style="font-size: 2.5rem; color: #000000;">
+                    📄 Generar PDF
+                </h2>
+
+                <div class="row align-items-center">
+                    <!-- Texto y botón a la izquierda -->
+                    <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0">
+                        <h3 class="titulo-degradado mb-3">
+                            Redacta y envía un reporte con imagen a un usuario
+                        </h3>
+
+                        <a href="@Url.Action("GenerarReporte", "Asesor")" class="btn btn-primary w-100 fw-bold">
+                            Generar
+                        </a>
+                    </div>
+
+                    <!-- Imagen a la derecha -->
+                    <div class="col-lg-6 text-center">
+                        <img src="~/Content/Images/ChatGPT Image 19 may 2025, 09_49_48 p.m..png"
+                             alt="Generar reporte"
+                             class="img-fluid"
+                             style="max-width: 100%; max-height: 280px;">
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .titulo-degradado {
+                    font-size: 1.8rem;
+                    font-weight: bold;
+                    background: linear-gradient(90deg, #007aff, #5e5ce6, #af52de, #ff2d55, #ff3b30);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    color: transparent;
+                }
+            </style>
+
+
+        }
+        else
+        {
+            <div class="alert alert-danger">No tienes permiso para ver esta sección.</div>
+        }
+
+        <!-- Toast -->
+        <div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;"></div>
+    </div>
+        
+
+</main>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="@Url.Content("~/Scripts/dashboardUsuario.js")"></script>
+<script>
+    const ctx = document.getElementById('graficoEvolucion').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May'],
+            datasets: [{
+                label: 'Balance Neto',
+                data: [1200, 1500, 1300, 1600, 1750],
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13,110,253,0.1)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: value => '$' + value }
+                }
+            }
+        }
+    });
+</script>
+<script>
+    function actualizarDashboardPorUsuario() {
+        const usuarioId = document.getElementById("usuarioId").value;
+
+        if (!usuarioId) {
+            alert("Por favor ingrese un ID de usuario válido.");
+            return;
+        }
+
+        fetch(`/Dashboard/ObtenerResumenFinancieroPorUsuario?idUsuario=${usuarioId}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Usuario no encontrado.");
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("balanceTotal").textContent = data.balanceTotal.toLocaleString();
+                document.getElementById("ingresosTotales").textContent = data.ingresosTotales.toLocaleString();
+                document.getElementById("gastosTotales").textContent = data.gastosTotales.toLocaleString();
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Error al obtener los datos del usuario.");
+            });
+    }
+</script>
+
+
+
+
+
+

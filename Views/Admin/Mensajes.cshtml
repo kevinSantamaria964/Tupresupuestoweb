@@ -1,0 +1,33 @@
+﻿@model List<Tupresupuestoweb.Repositories.Models.MensajeViewModel>
+@{
+    ViewBag.Title = "📬 Bandeja de Mensajes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="admin-container">
+    <h2>📬 Mensajes de los Usuarios</h2>
+    <p class="text-muted mb-3">Revisa las sugerencias, errores o felicitaciones recibidas</p>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>👤 Nombre</th>
+                <th>📧 Correo</th>
+                <th>📝 Asunto</th>
+                <th>✉️ Mensaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var msg in Model)
+            {
+                <tr>
+                    <td>@msg.Nombre</td>
+                    <td>@msg.Correo</td>
+                    <td>@msg.Asunto</td>
+                    <td>@msg.Contenido</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

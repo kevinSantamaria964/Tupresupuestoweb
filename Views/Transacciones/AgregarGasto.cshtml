@@ -1,0 +1,83 @@
+﻿@model Tupresupuestoweb.Repositories.Models.GastoViewModel
+
+@{
+    ViewBag.Title = "Agregar Gasto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-center align-items-center"
+     style=" min-height: 100vh; background: linear-gradient(to bottom right, #ffe5e5, #f8bfbf, #f28b82); border-radius: 2rem; padding: 2rem; margin-top: 30px; /* Más cerca del borde superior */ ">
+
+    <div class="p-5 shadow-sm"
+         style="
+             width: 100%;
+             max-width: 420px;
+             background-color: white;
+             border-radius: 2rem;
+         ">
+        <h1 class="text-center mb-4 fw-bold text-danger" style="font-size: 2rem;">
+            Agregar Gasto
+        </h1>
+
+        @using (Html.BeginForm("AgregarGasto", "Transacciones", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "Por favor corrige los siguientes errores:", new { @class = "alert alert-danger" })
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Cantidad, "Cantidad", new { @class = "form-label fw-semibold" })
+                @Html.TextBoxFor(m => m.Cantidad, new
+                {
+                    @class = "form-control",
+                    type = "text",
+                    placeholder = "Ej: 100.00"
+                })
+                @Html.ValidationMessageFor(m => m.Cantidad, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Categoria, "Categoría", new { @class = "form-label fw-semibold" })
+                @Html.DropDownListFor(m => m.Categoria, Model.CategoriasDisponibles, "Selecciona una categoría", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Categoria, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(m => m.Fecha, "Fecha", new { @class = "form-label fw-semibold" })
+                @Html.TextBoxFor(m => m.Fecha, new
+                {
+                    @class = "form-control",
+                    type = "date",
+                    value = Model.Fecha != DateTime.MinValue ? Model.Fecha.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd")
+                })
+                @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-4">
+                @Html.LabelFor(m => m.Descripcion, "Descripción", new { @class = "form-label fw-semibold" })
+                @Html.TextAreaFor(m => m.Descripcion, new
+                {
+                    @class = "form-control",
+                    rows = 3,
+                    placeholder = "Ej: Cena con amigos (opcional)"
+                })
+                @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100 fw-semibold shadow-sm">Guardar Gasto</button>
+        }
+        <div class="mt-4 text-center">
+            <a href="@Url.Action("DashboardUsuario", "Home")" class="btn btn-outline-secondary">🔙 Volver al Dashboard</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+
+

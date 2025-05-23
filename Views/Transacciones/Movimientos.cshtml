@@ -1,0 +1,171 @@
+﻿@model List<Tupresupuestoweb.Repositories.Models.VistaMovimiento>
+
+@{
+    ViewBag.Title = "Calendario de Movimientos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var datosPorFecha = Model
+        .GroupBy(m => m.Fecha.Date)
+        .ToDictionary(g => g.Key, g => new
+        {
+            TotalIngresos = g.Sum(x => x.TotalIngresos),
+            TotalGastos = g.Sum(x => x.TotalGastos)
+        });
+
+    var fechaInicio = new DateTime(DateTime.Today.Year, 1, 1);
+    var fechaFin = new DateTime(DateTime.Today.Year, 12, 31);
+
+    string tipo = Request.QueryString["tipo"] ?? "ingresos";
+}
+
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom, #f76b1c, #e94469, #b03b8c, #5e2a7e ); min-height: 100vh; border-radius: 2rem; color: white; margin-top: 30px; ">
+
+    <div class="container" style="margin-top: -30px;">
+        <!-- Ajuste del margen superior -->
+        <!-- Encabezado profesional centrado -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex justify-content-center align-items-center bg-white text-center">
+            <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+                <div class="emoji fs-1">📅</div>
+                <div>
+                    <h1 class="mb-0 fw-bold text-dark">Calendario de Movimientos - @DateTime.Today.Year</h1>
+                    <h1 class="titulo-degradado">Visualiza los ingresos y gastos por fechas</h1>
+
+                    <style>
+                        .titulo-degradado {
+                            font-size: 2rem;
+                            font-weight: bold;
+                            background: linear-gradient(90deg, #007aff, /* azul Apple */
+                            #5e5ce6, /* morado */
+                            #af52de, /* fucsia */
+                            #ff2d55, /* rosa fuerte */
+                            #ff3b30 /* rojo/naranja */
+                            );
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            /* background-clip sin prefijo se puede omitir si da error */
+                            color: transparent;
+                        }
+                    </style>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Botones de tipo Ingresos/Gastos con negrita y transiciones de hover -->
+    <div class="text-center mb-4">
+        <a href="?tipo=ingresos" class="btn btn-lg @(tipo == "ingresos" ? "btn-success" : "btn-outline-light") mx-2 transition-all duration-300 font-weight-bold">Ingresos</a>
+        <a href="?tipo=gastos" class="btn btn-lg @(tipo == "gastos" ? "btn-danger" : "btn-outline-light") mx-2 transition-all duration-300 font-weight-bold">Gastos</a>
+    </div>
+
+    <!-- Sección para ajustar el umbral de intensidad -->
+    <div class="my-5">
+        <h5 class="text-white mb-3 font-weight-bold" style="font-size: 1.25rem;">🎚 Ajustar Umbral de Intensidad</h5>
+
+        <div class="mb-4">
+            <label for="rango" class="text-white font-weight-bold" style="font-size: 1rem;">
+                Umbral de
+                @(tipo == "ingresos" ? "Ingresos" : "Gastos"): $<span id="valorRango" class="font-weight-bold">50000</span>
+            </label>
+            <input type="range" id="rango" class="form-range custom-range" min="10000" max="1000000" step="10000" value="50000">
+        </div>
+
+        <!-- Tooltip informativo sobre el rango -->
+        <div class="mt-3 mb-4">
+            <div class="px-4 py-3 fw-bold text-dark rounded-3 border border-white"
+                 style="background-color: rgba(255, 255, 255, 0.4); font-size: 0.85rem;">
+                Ajusta el umbral para cambiar la intensidad del color según los valores de
+                <strong class="text-capitalize">@((tipo == "ingresos") ? "ingresos" : "gastos")</strong>.
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="calendario">
+        @for (int mes = 1; mes <= 12; mes++)
+        {
+            var primerDiaDelMes = new DateTime(DateTime.Today.Year, mes, 1);
+            var ultimoDiaDelMes = primerDiaDelMes.AddMonths(1).AddDays(-1);
+
+            <div class="month-container">
+                <div class="month-header">@primerDiaDelMes.ToString("MMMM yyyy")</div>
+                <div class="month-grid">
+                    @for (int diaSemana = 0; diaSemana < 7; diaSemana++)
+                    {
+                        var diaDeLaSemana = new DateTime(2021, 1, diaSemana + 1);
+                        <div class="week-day">@diaDeLaSemana.ToString("ddd")</div>
+                    }
+
+                    @for (var fecha = primerDiaDelMes; fecha <= ultimoDiaDelMes; fecha = fecha.AddDays(1))
+                    {
+                        var clase = "no-data";
+                        double valor = 0;
+
+                        if (datosPorFecha.ContainsKey(fecha))
+                        {
+                            var datos = datosPorFecha[fecha];
+                            valor = tipo == "ingresos" ? datos.TotalIngresos : datos.TotalGastos;
+                        }
+
+                        <div class="day-box intensidad" data-valor="@valor" title="@fecha.ToString("dd MMM")">
+                            <span>@fecha.Day</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Botón volver -->
+    <div class="mt-4 text-center">
+        <a href="@Url.Action("DashboardUsuario", "Home")" class="btn btn-outline-light">🔙 Volver al Dashboard</a>
+    </div>
+    
+
+</main>
+
+
+<script>
+    const tipo = '@tipo';
+    const slider = document.getElementById("rango");
+    const spanValor = document.getElementById("valorRango");
+
+    function actualizarColores() {
+        const umbral = parseFloat(slider.value);
+        spanValor.innerText = umbral.toLocaleString();
+
+        document.querySelectorAll('.day-box.intensidad').forEach(box => {
+            const valor = parseFloat(box.dataset.valor);
+            box.classList.remove("high-income", "low-income", "high-expense", "low-expense", "neutral", "no-data");
+
+            if (isNaN(valor) || valor === 0) {
+                box.classList.add("neutral");
+                return;
+            }
+
+            if (tipo === "ingresos") {
+                if (valor >= umbral) {
+                    box.classList.add("high-income");
+                } else {
+                    box.classList.add("low-income");
+                }
+            } else {
+                if (valor >= umbral) {
+                    box.classList.add("high-expense");
+                } else {
+                    box.classList.add("low-expense");
+                }
+            }
+        });
+    }
+
+    slider.addEventListener("input", actualizarColores);
+    window.addEventListener("DOMContentLoaded", actualizarColores);
+</script>
+
+
+
+
+
+

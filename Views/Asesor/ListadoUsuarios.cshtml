@@ -1,0 +1,132 @@
+﻿@model IEnumerable<Tupresupuestoweb.Repositories.Models.UsuarioViewModel>
+
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom, #e0f7fa, /* celeste pastel */ #d1c4e9, /* lila suave */ #b3e5fc, /* azul cielo suave */ #cfd8dc ); min-height: 100vh; border-radius: 2rem; margin-top: 30px; ">
+    <div class="container" style="margin-top: -30px;">
+        
+
+        <!-- Nuevo encabezado con logo a la derecha -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex justify-content-between align-items-center bg-white">
+            <div class="d-flex align-items-center gap-4">
+                <!-- Emoji y títulos -->
+                <div class="emoji fs-1">👤</div>
+                <div>
+                    <h1 class="mb-0 fw-bold text-dark">Usuarios</h1>
+                    <h1 class="titulo-degradado">Listado detallado de usuarios</h1>
+
+                    <style>
+                        .titulo-degradado {
+                            font-size: 2rem;
+                            font-weight: bold;
+                            background: linear-gradient(90deg, #007aff, #5e5ce6, #af52de, #ff2d55, #ff3b30);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            color: transparent;
+                        }
+                    </style>
+                </div>
+            </div>
+
+           
+        </div>
+
+
+
+        <!-- Contenedor con scroll vertical y fondo oscuro -->
+        <div style="overflow-x: auto; overflow-y: auto; max-height: 500px; position: relative; border-radius: 1rem; background-color: #121212; padding: 20px;">
+            <table id="tablaUsuarios" class="table table-dark table-striped table-bordered rounded" style="width:100%; border-collapse: separate; border-spacing: 0 10px;">
+                <thead style="position: sticky; top: 0; background-color: #343a40; z-index: 10; box-shadow: 0 2px 5px rgb(0 0 0 / 0.5);">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Copiar ID</th>
+                        <th>Ir al Dashboard</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No hay usuarios para mostrar.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var usuario in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="text" id="idUsuario_@usuario.Id" class="form-control text-center" value="@usuario.Id" readonly
+                                           style="background-color: transparent; color: white; border: none;" />
+                                </td>
+                                <td>@usuario.Nombre</td>
+                                <td>
+                                    <button class="btn btn-outline-light btn-sm font-weight-bold" onclick="copiarId(@usuario.Id)">
+                                        📋 Copiar ID
+                                    </button>
+                                </td>
+                                <td>
+                                    <form method="get" action="@Url.Action("DashboardContadorUsuarios", "Asesor")">
+                                        <input type="hidden" name="idUsuario" value="@usuario.Id" />
+                                        <button type="submit" class="btn btn-outline-info btn-sm font-weight-bold">Ver Dashboard</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-center">
+            <a href="@Url.Action("DashboardContador", "Home")" class="btn btn-outline-light font-weight-bold" style="border-color: #2C3E99; color: #2C3E99; padding: 0.5rem 1.5rem;">
+                🔙 Volver al Dashboard
+            </a>
+        </div>
+    </div>
+</main>
+
+@section Styles {
+    <style>
+        /* Ajustes para tabla oscura con separación y sombras suaves */
+        #tablaUsuarios tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            #tablaUsuarios tbody tr:hover {
+                background-color: #3a3a3a;
+            }
+
+        /* Quitar borde de celdas para mejor separación */
+        #tablaUsuarios td, #tablaUsuarios th {
+            border: none !important;
+        }
+
+        /* Encabezado aún más grande */
+        thead tr th {
+            padding: 1.8rem 2rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            vertical-align: middle;
+            letter-spacing: 0.05em;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function copiarId(id) {
+            const input = document.getElementById('idUsuario_' + id);
+            input.select();
+            input.setSelectionRange(0, 99999); // Para móviles
+            document.execCommand("copy");
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "✅ Copiado";
+            setTimeout(() => btn.innerText = originalText, 1500);
+        }
+    </script>
+}
+
+
+

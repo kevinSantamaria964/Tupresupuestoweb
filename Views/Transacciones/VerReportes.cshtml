@@ -1,0 +1,120 @@
+﻿@model List<Tupresupuestoweb.Repositories.Models.ReporteEnviadoViewModel>
+
+@{
+    ViewBag.Title = "Mis Reportes";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ajusta si usas otro layout
+}
+
+<main class="content px-3 py-5"
+      style="background: linear-gradient(to bottom right, #fdf3b4, #f9c9a5, #f7b6d5, #d1c5e0, #b0d4e8, #666666);
+             min-height: 100vh; border-radius: 2rem; margin-top: 30px; color: #333;">
+
+    <div class="container px-5" style="margin-top: -30px;">
+
+        <!-- Encabezado con emoji -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex align-items-center gap-4 bg-white text-dark">
+            <div class="emoji fs-1">📄</div>
+            <div>
+                <h1 class="mb-0 fw-bold">Mis Reportes</h1>
+                <h1 class="titulo-degradado">Visualiza y descarga tus informes financieros</h1>
+            </div>
+        </div>
+
+        <style>
+            .titulo-degradado {
+                font-size: 1.8rem;
+                font-weight: bold;
+                background: linear-gradient(90deg, #007aff, #5e5ce6, #af52de, #ff2d55, #ff3b30);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: transparent;
+            }
+
+            .tabla-reportes th,
+            .tabla-reportes td {
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            .card-tabla {
+                background-color: #ffffffcc;
+                border-radius: 1rem;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                padding: 1.5rem;
+            }
+
+            .badge-leido {
+                padding: 0.4em 0.8em;
+                border-radius: 999px;
+                font-size: 0.9em;
+            }
+
+            .btn-descargar {
+                border-radius: 999px;
+                font-weight: 500;
+                padding: 0.4em 1em;
+                transition: all 0.3s ease;
+            }
+
+                .btn-descargar:hover {
+                    background-color: #007aff;
+                    color: white;
+                }
+        </style>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-warning rounded-4 shadow-sm p-4 text-center fs-5">
+                No tienes reportes disponibles aún.
+            </div>
+        }
+        else
+        {
+            <div class="card-tabla">
+                <div class="table-responsive">
+                    <table class="table tabla-reportes table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Título</th>
+                                <th>Mensaje</th>
+                                <th>Fecha</th>
+                                <th>Leído</th>
+                                <th>Descargar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reporte in Model)
+                            {
+                                var nombreArchivo = System.IO.Path.GetFileName(reporte.RutaArchivo);
+                                <tr>
+                                    <td class="fw-bold">@reporte.Titulo</td>
+                                    <td>@reporte.Mensaje</td>
+                                    <td>@reporte.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        @if (reporte.Leido)
+                                        {
+                                            <span class="badge bg-success badge-leido">Sí</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary badge-leido">No</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("DescargarReporte", "Transacciones", new { nombreArchivo = nombreArchivo })"
+                                           class="btn btn-outline-primary btn-sm btn-descargar">
+                                            <i class="bi bi-download"></i> Descargar
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</main>
+
+
+

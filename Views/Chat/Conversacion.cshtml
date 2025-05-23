@@ -1,0 +1,124 @@
+﻿@model List<Tupresupuestoweb.Repositories.Models.MensajeChat>
+
+@{
+    ViewBag.Title = "Conversación";
+    int receptorId = ViewBag.ReceptorId;
+    int usuarioId = (int)Session["IdUsuario"];
+}
+
+<main class="content px-3 py-5"
+      style="background: linear-gradient(
+    to bottom,
+    #ff5722,   /* naranja vivo */
+    #ff7043,   /* mandarina intensa */
+    #ffa726,   /* naranja suave */
+    #ffd54f    /* amarillo brillante */
+);
+
+             min-height: 100vh; border-radius: 2rem; color: white; margin-top: 30px;
+             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+    <!-- ENCABEZADO -->
+    <div class="container mb-4">
+        <div class="rounded-4 p-5 shadow-sm bg-white text-center d-flex flex-column align-items-center">
+            <div class="emoji fs-1 mb-3">💬</div>
+            <h1 class="fw-bold mb-1 text-dark">Conversación</h1>
+            <h1 class="titulo-degradado">Diseñado para una mejor interaccion.</h1>
+
+            <style>
+                .titulo-degradado {
+                    font-size: 2rem;
+                    font-weight: bold;
+                    background: linear-gradient(90deg, #007aff, /* azul Apple */
+                    #5e5ce6, /* morado */
+                    #af52de, /* fucsia */
+                    #ff2d55, /* rosa fuerte */
+                    #ff3b30 /* rojo/naranja */
+                    );
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    /* background-clip sin prefijo se puede omitir si da error */
+                    color: transparent;
+                }
+
+            </style>
+
+            <span class="text-secondary mt-2">📍 Conversación actual</span>
+        </div>
+    </div>
+
+    <!-- CUERPO DEL CHAT -->
+    <div class="container">
+        <div class="p-4 mb-4"
+             style="background-color: #ffffff;
+                border-radius: 1.5rem;
+                max-height: 450px;
+                overflow-y: auto;
+                border: 1px solid #ddd;">
+            @foreach (var mensaje in Model)
+            {
+                bool esEmisor = mensaje.IdEmisor == usuarioId;
+                <div class="mb-3 d-flex" style="justify-content:@(esEmisor ? "flex-end" : "flex-start");">
+                    <div style="
+                    background-color:@(esEmisor ? "#e3f2fd" : "#d0f8ce");
+                    color: #222;
+                    padding: 14px 20px;
+                    border-radius: 20px;
+                    max-width: 70%;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <p class="mb-1" style="margin:0;">@mensaje.Contenido</p>
+                        <small style="font-size: 0.75em; opacity: 0.7;">@mensaje.FechaEnvio.ToString("g")</small>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- FORMULARIO -->
+        <hr style="border-color: #ccc;" />
+
+        @using (Html.BeginForm("EnviarMensaje", "Chat", FormMethod.Post))
+        {
+            @Html.Hidden("receptorId", receptorId)
+
+            <textarea name="contenido" rows="3"
+                      style="width: 100%;
+                         border-radius: 1rem;
+                         padding: 15px;
+                         border: 1px solid #ccc;
+                         box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+                         resize: none;
+                         font-size: 1rem;
+                         background-color: #f9f9f9;
+                         color: #333;"
+                      placeholder="Escribe tu mensaje aquí..."></textarea>
+
+            <button type="submit"
+                    style="margin-top: 15px;
+                       background-color: #1976d2;
+                       color: #fff;
+                       border: none;
+                       padding: 12px 24px;
+                       border-radius: 1rem;
+                       font-weight: 600;
+                       font-size: 1rem;
+                       transition: background 0.3s ease;
+                       box-shadow: 0 4px 14px rgba(0,0,0,0.1);">
+                Enviar
+            </button>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div style="color: #d32f2f; margin-top: 15px; font-weight: 600;">
+                @TempData["Error"]
+            </div>
+        }
+    </div>
+
+</main>
+
+
+
+

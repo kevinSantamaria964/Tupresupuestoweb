@@ -1,0 +1,684 @@
+﻿@model Tupresupuestoweb.Repositories.Models.EstadisticasUsuarioViewModel
+@{
+    ViewBag.Title = "Estadísticas del Usuario";
+}
+
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom right, #fdf3b4, #f9c9a5, #f7b6d5, #d1c5e0, #b0d4e8, #666666); min-height: 100vh; border-radius: 2rem; margin-top: 30px; /* Más cerca del borde superior */ ">
+
+    <div class="container-fluid px-5" style="margin-top: -30px;">
+
+        <!-- Encabezado -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex justify-content-between align-items-center bg-white">
+            <div class="d-flex align-items-center gap-4">
+                <div class="emoji fs-1">📈</div>
+                <div>
+                    <h1 class="mb-0 fw-bold text-dark">Estadísticas del Usuario</h1>
+                    <h1 class="titulo-degradado">Análisis detallado de ingresos y gastos</h1>
+
+                    <style>
+                        .titulo-degradado {
+                            font-size: 2rem;
+                            font-weight: bold;
+                            background: linear-gradient(90deg, #007aff, /* azul Apple */
+                            #5e5ce6, /* morado */
+                            #af52de, /* fucsia */
+                            #ff2d55, /* rosa fuerte */
+                            #ff3b30 /* rojo/naranja */
+                            );
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            /* background-clip sin prefijo se puede omitir si da error */
+                            color: transparent;
+                        }
+                    </style>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros de fecha -->
+        <form method="get" action="@Url.Action("EstadisticasUsuario", "Asesor")" class="mb-5">
+            <input type="hidden" name="id" value="@ViewBag.IdUsuario" />
+            <input type="hidden" name="rango" id="rangoSeleccionado" />
+
+            <div class="row align-items-center g-3">
+                <div class="mb-5">
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <button type="submit" class="boton-negro" onclick="seleccionarRango('hoy')">Hoy</button>
+                        <button type="submit" class="boton-negro" onclick="seleccionarRango('semana')">Última semana</button>
+                        <button type="submit" class="boton-negro" onclick="seleccionarRango('mes')">Último mes</button>
+                        <button type="submit" class="boton-negro" onclick="seleccionarRango('anio')">Este año</button>
+                    </div>
+
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-auto">
+                            <label for="desde" class="form-label fw-bold">Desde:</label>
+                            <input type="date" name="desde" class="input-fecha" />
+                        </div>
+                        <div class="col-md-auto">
+                            <label for="hasta" class="form-label fw-bold">Hasta:</label>
+                            <input type="date" name="hasta" class="input-fecha" />
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="submit" class="boton-negro">Filtrar personalizado</button>
+                        </div>
+                        <div class="row align-items-center g-3">
+                            <button type="button" class="boton-negro" onclick="generarReporte()">Generar PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Resumen Financiero -->
+                <div class="financial-summary row text-center g-3 mb-5">
+                    <!-- Balance -->
+                    <div class="col-md-4">
+                        <div class="card summary-card border-0 shadow rounded-4 p-3 h-100 bg-light-balance position-relative">
+                            <div class="icon-wrapper position-absolute top-0 end-0 m-3">
+                                <div class="icon-circle bg-primary text-white fs-4">📊</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <h6 class="text-muted">Balance Total</h6>
+                                <h2 class="fw-bold text-dark resumen-monto">
+                                    @Model.SaldoAcumulado.LastOrDefault().ToString("N0")
+                                </h2>
+                                <p class="text-muted small mt-2">Estado financiero neto del período actual</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Ingresos -->
+                    <div class="col-md-4">
+                        <div class="card summary-card border-0 shadow rounded-4 p-3 h-100 bg-light-success position-relative">
+                            <div class="icon-wrapper position-absolute top-0 end-0 m-3">
+                                <div class="icon-circle bg-success text-white fs-4">💰</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <h6 class="text-muted">Ingresos Acumulados</h6>
+                                <h2 class="fw-bold text-success resumen-monto">
+                                    <span class="prefix">+</span>
+                                    @Model.IngresosMensuales.Sum().ToString("N0")
+                                </h2>
+                                <p class="text-success small mt-2">Incremento del 12% respecto al mes anterior</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Gastos -->
+                    <div class="col-md-4">
+                        <div class="card summary-card border-0 shadow rounded-4 p-3 h-100 bg-light-danger position-relative">
+                            <div class="icon-wrapper position-absolute top-0 end-0 m-3">
+                                <div class="icon-circle bg-danger text-white fs-4">💸</div>
+                            </div>
+                            <div class="card-body text-center">
+                                <h6 class="text-muted">Egresos Acumulados</h6>
+                                <h2 class="fw-bold text-danger resumen-monto">
+                                    <span class="prefix">−</span>
+                                    @Model.GastosMensuales.Sum().ToString("N0")
+                                </h2>
+                                <p class="text-danger small mt-2">Reducción del 8% en comparación al mes anterior</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- Gráficos -->
+                <<!-- 🔽 Ingresos por Categoría -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="chart-proporcion-wrapper card rounded-4 shadow-sm p-4">
+            <h4 class="card-title text-center mb-4">📊 Ingresos por Categoría</h4>
+            <canvas id="ingresosCategoriaChart" class="chart-dona"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- 🔽 Gastos por Categoría -->
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <div class="chart-proporcion-wrapper card rounded-4 shadow-sm p-4">
+            <h4 class="card-title text-center mb-4">📊 Gastos por Categoría</h4>
+            <canvas id="gastosCategoriaChart" class="chart-dona"></canvas>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+                <div class="card rounded-4 shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Comparativa Mensual: Ingresos vs Gastos</h5>
+                        <canvas id="comparativaMensualChart" style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="card rounded-4 shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Saldo Neto Mensual (Ingresos - Gastos)</h5>
+                        <canvas id="saldoMensualChart" style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="card rounded-4 shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Saldo Acumulado</h5>
+                        <canvas id="saldoAcumuladoChart" style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="card rounded-4 shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">📊 Porcentaje de Ahorro Mensual</h5>
+                        <canvas id="porcentajeAhorroChart" style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="card rounded-4 shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Número de Transacciones por Categoría</h5>
+                        <canvas id="transaccionesCategoriaChart" style="width:100%; height:300px;"></canvas>
+                    </div>
+
+                </div>
+
+                <div class="card rounded-4 shadow-sm mb-4 w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Balance-Ingresos-Gastos</h5>
+                        <canvas id="miGrafico" width="400" height="200" style="max-width: 100%; height: auto;"></canvas>
+                    </div>
+
+                </div>
+            </div>
+           
+        </form>
+    </div>
+
+    <!-- 🔽 Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script>
+function seleccionarRango(rango) {
+    document.getElementById("rangoSeleccionado").value = rango;
+}
+
+// Variables desde el modelo
+const categoriasIngresos = @Html.Raw(Json.Encode(Model.CategoriasIngresos));
+const totalesIngresos = @Html.Raw(Json.Encode(Model.TotalesIngresos));
+const categoriasGastos = @Html.Raw(Json.Encode(Model.CategoriasGastos));
+const totalesGastos = @Html.Raw(Json.Encode(Model.TotalesGastos));
+const meses = @Html.Raw(Json.Encode(Model.Meses));
+const ingresosMensuales = @Html.Raw(Json.Encode(Model.IngresosMensuales));
+const gastosMensuales = @Html.Raw(Json.Encode(Model.GastosMensuales));
+const saldoMensual = @Html.Raw(Json.Encode(Model.SaldoMensual));
+const saldoAcumulado = @Html.Raw(Json.Encode(Model.SaldoAcumulado));
+const porcentajeAhorroMensual = @Html.Raw(Json.Encode(Model.PorcentajeAhorroMensual));
+const categoriasFrecuentes = @Html.Raw(Json.Encode(Model.CategoriasFrecuentes));
+const ingresosPorCategoria = @Html.Raw(Json.Encode(Model.CantidadesIngresosPorCategoria));
+const gastosPorCategoria = @Html.Raw(Json.Encode(Model.CantidadesGastosPorCategoria));
+
+// Variables para el resumen financiero (balance, ingresos y egresos totales)
+const balanceTotal = saldoAcumulado.length > 0 ? saldoAcumulado[saldoAcumulado.length - 1] : 0;
+const ingresosAcumulados = ingresosMensuales.reduce((a,b) => a + b, 0);
+const egresosAcumulados = gastosMensuales.reduce((a,b) => a + b, 0);
+
+
+        function generarColoresUnicos(cantidad) {
+            const colores = [];
+            const paso = 360 / cantidad;
+            for (let i = 0; i < cantidad; i++) {
+                colores.push(`hsl(${i * paso}, 70%, 50%)`);
+            }
+            return colores;
+        }
+
+        // Forzamos tamaño interno consistente
+        function ajustarTamanioCanvas(canvas, size = 400) {
+            canvas.width = size;
+            canvas.height = size;
+        }
+
+        // Asignamos canvas y ajustamos tamaño antes de crear cada gráfico
+        const ingresosCanvas = document.getElementById('ingresosCategoriaChart');
+        ajustarTamanioCanvas(ingresosCanvas);
+        const gastosCanvas = document.getElementById('gastosCategoriaChart');
+        ajustarTamanioCanvas(gastosCanvas);
+
+        // 🎨 Colores únicos
+        const coloresIngresos = generarColoresUnicos(categoriasIngresos.length);
+        const coloresGastos = generarColoresUnicos(categoriasGastos.length);
+
+        // 🟢 Ingresos por categoría
+        new Chart(ingresosCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: categoriasIngresos,
+                datasets: [{
+                    data: totalesIngresos,
+                    backgroundColor: coloresIngresos
+                }]
+            },
+            options: {
+                plugins: {
+                    datalabels: {
+                        color: '#fff',
+                        formatter: (value, context) => {
+                            const data = context.chart.data.datasets[0].data;
+                            const total = data.reduce((a, b) => a + b, 0);
+                            const porcentaje = (value / total * 100).toFixed(1);
+                            return `${porcentaje}% ($${value})`;
+                        },
+                        font: { weight: 'bold' }
+                    },
+                    legend: { position: 'bottom' }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+        // 🔴 Gastos por categoría
+        new Chart(gastosCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: categoriasGastos,
+                datasets: [{
+                    data: totalesGastos,
+                    backgroundColor: coloresGastos
+                }]
+            },
+            options: {
+                plugins: {
+                    datalabels: {
+                        color: '#fff',
+                        formatter: (value, context) => {
+                            const data = context.chart.data.datasets[0].data;
+                            const total = data.reduce((a, b) => a + b, 0);
+                            const porcentaje = (value / total * 100).toFixed(1);
+                            return `${porcentaje}% ($${value})`;
+                        },
+                        font: { weight: 'bold' }
+                    },
+                    legend: { position: 'bottom' }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+
+        
+
+
+
+// 📊 Comparativa mensual Ingresos vs Gastos
+new Chart(document.getElementById('comparativaMensualChart'), {
+    type: 'bar',
+    data: {
+        labels: meses,
+        datasets: [
+            {
+                label: 'Ingresos',
+                data: ingresosMensuales,
+                backgroundColor: '#007bff'
+            },
+            {
+                label: 'Gastos',
+                data: gastosMensuales,
+                backgroundColor: '#dc3545'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            datalabels: {
+                anchor: 'end',
+                align: 'top',
+                formatter: (value) => `$${value}`,
+                color: '#000'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `${context.dataset.label}: $${context.parsed.y}`;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
+// 📈 Saldo mensual
+new Chart(document.getElementById('saldoMensualChart'), {
+    type: 'line',
+    data: {
+        labels: meses,
+        datasets: [{
+            label: 'Saldo Neto',
+            data: saldoMensual,
+            borderColor: '#4e73df',
+            backgroundColor: 'rgba(78, 115, 223, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            datalabels: {
+                align: 'top',
+                formatter: (value) => `$${value}`,
+                color: '#4e73df',
+                font: { weight: 'bold' }
+            },
+            legend: { position: 'top' }
+        },
+        scales: {
+            y: { beginAtZero: false }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
+// 📉 Saldo acumulado
+new Chart(document.getElementById('saldoAcumuladoChart'), {
+    type: 'line',
+    data: {
+        labels: meses,
+        datasets: [{
+            label: 'Saldo Acumulado',
+            data: saldoAcumulado,
+            borderColor: '#1cc88a',
+            backgroundColor: 'rgba(28, 200, 138, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            datalabels: {
+                align: 'top',
+                formatter: (value) => `$${value}`,
+                color: '#1cc88a',
+                font: { weight: 'bold' }
+            },
+            legend: { position: 'top' }
+        },
+        scales: {
+            y: { beginAtZero: false }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
+// 🟩 Porcentaje de ahorro mensual
+new Chart(document.getElementById('porcentajeAhorroChart'), {
+    type: 'line',
+    data: {
+        labels: meses,
+        datasets: [{
+            label: '% Ahorro',
+            data: porcentajeAhorroMensual,
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40, 167, 69, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            datalabels: {
+                align: 'top',
+                formatter: (value) => `${value.toFixed(1)}%`,
+                color: '#28a745',
+                font: { weight: 'bold' }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `% Ahorro: ${context.parsed.y.toFixed(1)}%`;
+                    }
+                }
+            },
+            legend: { position: 'top' }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
+// 📊 Frecuencia de transacciones por categoría
+        new Chart(document.getElementById('transaccionesCategoriaChart'), {
+            type: 'bar',
+            data: {
+                labels: categoriasFrecuentes,
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: ingresosPorCategoria,
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderRadius: 6,
+                        stack: 'Stack 0'
+                    },
+                    {
+                        label: 'Gastos',
+                        data: gastosPorCategoria,
+                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                        borderRadius: 6,
+                        stack: 'Stack 0'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                layout: {
+                    padding: {
+                        top: 20,
+                        bottom: 10
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (value) => {
+                            return value === 0 ? '' : value.toLocaleString();
+                        },
+                        color: '#000',
+                        font: {
+                            weight: 'bold',
+                            size: 12
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Transacciones por Categoría (Ingresos vs Gastos)',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            bottom: 15
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} transacciones`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 13
+                            }
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e0e0e0'
+                        },
+                        ticks: {
+                            font: {
+                                size: 13
+                            },
+                            callback: value => value.toLocaleString()
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+
+
+
+        const ctx = document.getElementById('miGrafico').getContext('2d');
+        const miGrafico = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Balance Total', 'Ingresos', 'Egresos'],
+                datasets: [{
+                    label: 'Monto',
+                    data: [balanceTotal, ingresosAcumulados, egresosAcumulados],
+                    backgroundColor: ['#0d6efd', '#198754', '#dc3545'],
+                    borderRadius: 10,  // Bordes redondeados
+                    borderSkipped: false, // Para que todos los bordes estén redondeados
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold',
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Resumen Financiero',
+                        font: {
+                            size: 18,
+                            weight: 'bold',
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: context => `Monto: $${context.parsed.y.toLocaleString()}`
+                        }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: value => `$${value.toLocaleString()}`,
+                        font: {
+                            weight: 'bold',
+                            size: 12,
+                        },
+                        color: '#000',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // Formato con separador de miles
+                            callback: function (value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: '#e0e0e0',
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels], // recuerda incluir el plugin para mostrar etiquetas si quieres
+        });
+
+    </script>
+
+
+
+    <script>
+        function generarReporte() {
+            const imagenes = [];
+
+            document.querySelectorAll('canvas').forEach(canvas => {
+                const dataURL = canvas.toDataURL('image/png');
+
+                // Remover el prefijo "data:image/png;base64,"
+                const base64 = dataURL.replace(/^data:image\/png;base64,/, '');
+
+                imagenes.push(base64);
+            });
+
+            fetch('/Asesor/GenerarReporteGraficas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imagenes })
+            })
+                .then(response => {
+                    if (!response.ok) return response.text().then(text => { throw new Error(text); });
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "ReporteGraficas.pdf";
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    alert("Error al generar el reporte: " + error.message);
+                });
+        }
+    </script>
+
+
+
+</main>

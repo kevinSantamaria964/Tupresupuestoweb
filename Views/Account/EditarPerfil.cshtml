@@ -1,0 +1,58 @@
+﻿@model Tupresupuestoweb.Repositories.Models.PerfilViewModel
+
+@{
+    ViewBag.Title = "Editar Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-center align-items-center"
+     style=" min-height: 100vh; background: linear-gradient(to bottom right, #e1f3fc, #a8d8f4, #8dbcf7); border-radius: 2rem; padding: 2rem; margin-top: 30px; /* Más cerca del borde superior */ ">
+
+    <div class="p-5 shadow-sm"
+         style="
+             width: 100%;
+             max-width: 420px;
+             background-color: white;
+             border-radius: 2rem;
+         ">
+        <h2 class="text-center mb-2 fw-bold text-primary">✏️ Editar Perfil</h2>
+        <p class="text-center text-muted mb-4">Actualiza tus datos personales</p>
+
+        @using (Html.BeginForm("EditarPerfil", "User", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.Nombre, new { @class = "form-label fw-semibold" })
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", placeholder = "Ingresa tu nombre" })
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.Correo, new { @class = "form-label fw-semibold" })
+                @Html.TextBoxFor(model => model.Correo, new { @class = "form-control", placeholder = "ejemplo@correo.com" })
+                @Html.ValidationMessageFor(model => model.Correo, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.Username, new { @class = "form-label fw-semibold" })
+                @Html.TextBoxFor(model => model.Username, new { @class = "form-control", @readonly = "true" })
+                <small class="form-text text-muted">Este es tu nombre de usuario, no puede modificarse.</small>
+            </div>
+
+            @Html.HiddenFor(model => model.Username)
+
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary fw-bold">💾 Guardar Cambios</button>
+            </div>
+        }
+
+        <div class="mt-4 text-center">
+            <a href="@Url.Action("Perfil", "Account")" class="btn btn-outline-secondary">← Volver al Perfil</a>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -1,0 +1,439 @@
+﻿@model Tupresupuestoweb.Repositories.Models.AdminDashboardViewModel
+
+@{
+    ViewBag.Title = "Gestión de Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom right, #ffe5b4, #f9b384, #f28b82, #7eaaff); min-height: 100vh; border-radius: 2rem; margin-top: 30px; /* Más cerca del borde superior */ ">
+
+    <div class="container-fluid">
+
+        <!-- Encabezado -->
+        <div class="rounded-4 p-5 mb-5 shadow-sm d-flex justify-content-between align-items-center bg-white apple-header">
+            <div class="d-flex align-items-center gap-4">
+                <div class="emoji fs-1">👋</div>
+                <div>
+                    <h1 class="mb-0 fw-bold text-dark">
+                        Hola,  <span class="d-inline-flex align-items-center gap-2">
+                            <img src="~/Content/Images/verificado.png" alt="Verificado" style="width: 35px; height: 28px;">
+                            @Session["Username"]
+                        </span>
+                    </h1>
+                    <h1 class="titulo-degradado">Bienvenido de nuevo</h1>
+
+                    <style>
+                        .titulo-degradado {
+                            font-size: 2rem;
+                            font-weight: bold;
+                            background: linear-gradient(90deg, #007aff, /* azul Apple */
+                            #5e5ce6, /* morado */
+                            #af52de, /* fucsia */
+                            #ff2d55, /* rosa fuerte */
+                            #ff3b30 /* rojo/naranja */
+                            );
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            /* background-clip sin prefijo se puede omitir si da error */
+                            color: transparent;
+                        }
+                    </style>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-4">
+                <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100"
+                     alt="Foto de perfil"
+                     class="rounded-circle shadow-sm"
+                     style="width: 72px; height: 72px; object-fit: cover;">
+                <div class="text-end">
+                    <p class="mb-1 fw-bold text-dark fs-5">@Session["Username"]</p>
+                    <a href="@Url.Action("Perfil", "Account")" class="btn btn-primary ms-2" rounded-pill px-4">
+                        👤 Ver perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas estadísticas -->
+        <div class="row mb-4">
+            <div class="col-12 col-md-6 col-lg-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total de usuarios</h5>
+                        <h2>@Model.TotalUsuarios</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ingresos</h5>
+                        <h2>$@Model.TotalIngresos.ToString("N2")</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sesiones activas</h5>
+                        <h2>@Model.SesionesActivas</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Carga del sistema</h5>
+                        <h2>@Model.CargaSistema%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico: Distribución de Roles -->
+        <div class="chart-proporcion-wrapper mb-5">
+            <h5 class="fw-bold mb-3">📎 Distribución de Roles</h5>
+            <div class="bg-white rounded-4 shadow-sm p-4">
+                <canvas id="graficoRoles" style="width: 100%; max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+
+        <!-- Gráfico: Evolución Ingresos vs Gastos -->
+        <div class="card shadow-sm p-3 mb-4 bg-white rounded-2xl" style="width: 100%; height: 400px;">
+            <h5 class="fw-bold mb-3">Evolución de Ingresos y Gastos</h5>
+            <canvas id="evolucionChart"></canvas>
+        </div>
+
+        <!-- Actividad por Día -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card rounded-4 shadow-sm w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark text-center">Actividad por Día (últimos 7 días)</h5>
+                        <canvas id="actividadDiaChart" style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actividad por Usuario -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card rounded-4 shadow-sm w-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark text-center">Actividad de Usuarios</h5>
+                        <canvas id="actividadChart" style="width:100%; height:300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actividades recientes -->
+        <div class="col-12 mb-3">
+            <div class="card h-100 w-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Actividades recientes</h5>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    @if (Model.ActividadesRecientes != null && Model.ActividadesRecientes.Any())
+                    {
+                        foreach (var actividad in Model.ActividadesRecientes)
+                        {
+                            <div class="activity-item d-flex py-3 border-bottom" style="font-size: 1.1rem;">
+                                <div class="activity-content">
+                                    <small class="text-muted">Hace poco</small>
+                                    <p class="mb-0">@actividad</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No hay actividades recientes.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Usuarios -->
+        <div class="mt-5">
+            <div class="card w-100">
+                <div class="card-header">
+                    <h2 class="mb-0">👨‍💼 Gestión de Usuarios</h2>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Visualiza y administra los roles y estados de los usuarios registrados</p>
+
+                    @using (Html.BeginForm("ActualizarUsuarios", "Admin", FormMethod.Post))
+                    {
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-bordered table-striped align-middle">
+                                <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>Usuario</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var usuario in Model.Usuarios)
+                                    {
+                                        <tr>
+                                            <td>@usuario.Nombre</td>
+                                            <td>@usuario.Correo</td>
+                                            <td>@usuario.Username</td>
+                                            <td>
+                                                <select class="form-select" name="Rol_@usuario.Username">
+                                                    <option value="Usuario Básico" @(usuario.Rol == "Usuario Básico" ? "selected" : "")>Usuario Básico</option>
+                                                    <option value="Asesor Financiero" @(usuario.Rol == "Asesor Financiero" ? "selected" : "")>Asesor Financiero</option>
+                                                    <option value="Administrador" @(usuario.Rol == "Administrador" ? "selected" : "")>Administrador</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                @if (usuario.Activo)
+                                                {
+                                                    <span class="badge bg-success">Activo</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Inactivo</span>
+                                                }
+                                            </td>
+                                            <td class="d-flex gap-2 flex-wrap">
+                                                <button type="submit" class="btn btn-sm btn-outline-primary" name="accion" value="guardar_@usuario.Username">Guardar</button>
+
+                                                @if (usuario.Activo)
+                                                {
+                                                    <button type="submit" class="btn btn-sm btn-outline-warning" name="accion" value="desactivar_@usuario.Username">Desactivar</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-sm btn-outline-success" name="accion" value="activar_@usuario.Username">Activar</button>
+                                                }
+
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" name="accion" value="eliminar_@usuario.Username"
+                                                        onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                                                    Eliminar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 mb-4 mt-4">
+        <div class="col-12 mb-4">
+            <div class="card h-100 w-100 shadow-sm rounded-4 mx-auto" style="max-width: 1220px;">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-2 fw-bold">📤 Exportar Usuarios a PDF</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                        Por favor, seleccione uno o más roles  para incluir en el reporte PDF. Solo se exportarán los datos asociados a los roles elegidos.
+                    </p>
+                </div>
+                <div class="card-body" style="max-height: 250px; overflow-y: auto;">
+                    @using (Html.BeginForm("ExportarUsuariosPdf", "Admin", FormMethod.Get))
+                    {
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="rolesSeleccionados" value="3" checked id="rolUsuario">
+                            <label class="form-check-label" for="rolUsuario">
+                                Usuario Básico
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="rolesSeleccionados" value="2" checked id="rolAsesor">
+                            <label class="form-check-label" for="rolAsesor">
+                                Asesor Financiero
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="rolesSeleccionados" value="1" checked id="rolAdmin">
+                            <label class="form-check-label" for="rolAdmin">
+                                Administrador
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2">
+                            Exportar PDF
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Gráfico Actividad de Usuarios
+        new Chart(document.getElementById('actividadChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Encode(Model.ActividadUsuarios.Keys)),
+                datasets: [{
+                    label: 'Transacciones',
+                    data: @Html.Raw(Json.Encode(Model.ActividadUsuarios.Values)),
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
+                    x: { title: { display: true, text: 'Usuario' } }
+                }
+            }
+        });
+
+       // Gráfico Distribución de Roles
+const ctx = document.getElementById('graficoRoles').getContext('2d');
+const graficoRoles = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: @Html.Raw(Json.Encode(Model.DistribucionRoles.Keys)),
+        datasets: [{
+            label: 'Cantidad',
+            data: @Html.Raw(Json.Encode(Model.DistribucionRoles.Values)),
+            backgroundColor: ['#4A90E2', '#FF5A5F', '#F5A623'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    font: {
+                        family: 'Helvetica Neue, Segoe UI, sans-serif',
+                        size: 14,
+                        weight: '500'
+                    },
+                    color: '#333'
+                }
+            },
+            tooltip: {
+                bodyFont: {
+                    family: 'Helvetica Neue, Segoe UI, sans-serif',
+                    size: 13
+                },
+                titleFont: {
+                    family: 'Helvetica Neue, Segoe UI, sans-serif',
+                    weight: '600'
+                }
+            }
+        }
+    }
+});
+
+
+
+        // Gráfico Actividad por Día
+        new Chart(document.getElementById('actividadDiaChart'), {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Encode(Model.ActividadPorDia.Keys)),
+                datasets: [{
+                    label: 'Registros por día',
+                    data: @Html.Raw(Json.Encode(Model.ActividadPorDia.Values)),
+                    backgroundColor: 'rgba(0, 122, 255, 0.7)',
+                    borderColor: 'rgba(0, 122, 255, 1)',
+                    borderWidth: 1,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Cantidad de transacciones' } },
+                    x: { title: { display: true, text: 'Día' } }
+                }
+            }
+        });
+
+        // Gráfico Evolución Ingresos vs Gastos
+        new Chart(document.getElementById('evolucionChart'), {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Encode(Model.EvolucionIngresosGastos.Select(e => e.Fecha))),
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: @Html.Raw(Json.Encode(Model.EvolucionIngresosGastos.Select(e => e.TotalIngresos))),
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Gastos',
+                        data: @Html.Raw(Json.Encode(Model.EvolucionIngresosGastos.Select(e => e.TotalGastos))),
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+    <style>
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+            .card:hover {
+                transform: scale(1.01);
+            }
+
+        .card-title {
+            font-weight: 600;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        .btn-outline-primary {
+            border-radius: 2rem;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+        }
+
+        .apple-header h1,
+        .apple-header small {
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+    </style>
+}
+
+
+
+
+

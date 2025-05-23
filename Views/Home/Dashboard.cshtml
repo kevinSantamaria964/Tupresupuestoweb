@@ -1,0 +1,289 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - TuPresupuesto</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Estilo personalizado -->
+    <link rel="stylesheet" href="~/Content/site.css" />
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <img src="~/Content/Images/tupresupuestoinicio.png"
+                     alt="TuPresupuesto"
+                     style="height: 56px; max-width: 250px; width: auto;" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#beneficios">Beneficios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#caracteristicas">Características</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#testimonios">Testimonios</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary ms-2" href="@Url.Action("Login", "Account")">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-2" href="@Url.Action("Register", "Account")">Registrarse Gratis</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- HERO -->
+    <section id="hero" class="hero-section pt-5 mt-5">
+        <div class="container h-100">
+            <div class="row h-100 justify-content-center align-items-center">
+                <div class="col-lg-6 text-center text-lg-start">
+                    <h1 class="display-3 fw-bold">
+                        Toma el control de tus finanzas <span class="text-primary">TuPresupuesto</span>
+                    </h1>
+
+                    <p class="lead fs-4 mb-4">Gestiona tus gastos, ahorra más y alcanza tus metas financieras con nuestra plataforma inteligente.</p>
+                    <div class="d-flex justify-content-center justify-content-lg-start gap-4">
+                        <a href="@Url.Action("Register", "Account")" class="btn btn-primary btn-lg py-3 px-4">Registrarse Gratis</a>
+                        <a href="#conocemas" class="btn btn-outline-primary btn-lg py-3 px-4">Conoce Más</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3" alt="Gestión Financiera" class="img-fluid rounded-4 shadow" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- BENEFICIOS -->
+    <section id="beneficios" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Cómo Automatizamos tu Ahorro</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Presupuesto en Tiempo Real</h5>
+                            <p class="card-text">Monitorea tus gastos al instante y toma decisiones informadas.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <i class="fas fa-shield-alt fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Seguridad Avanzada</h5>
+                            <p class="card-text">Protección de datos con estándares .</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <i class="fas fa-magic fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Personalización Inteligente</h5>
+                            <p class="card-text">Recomendaciones adaptadas a tus hábitos financieros.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100 border-0 shadow-sm text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-pie fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Análisis Financiero Detallado</h5>
+                            <p class="card-text">Reportes completos para mejorar tu gestión financiera.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTRODUCCIÓN A TUPRESUPUESTO -->
+    <section id="conocemas" class="py-5 bg-white">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- TEXTO -->
+                <div class="col-md-6 text-center text-md-start">
+                    <h2 class="fw-semibold mb-4 display-5" style="color: #1a1a1a;">
+                        ¿Por qué usar <span class="text-primary">TuPresupuesto</span>?
+                    </h2>
+                    <p class="text-muted" style="font-size: 1.2rem; line-height: 1.8;">
+                        <span class="text-primary fw-semibold">TuPresupuesto</span> es una plataforma web creada para brindarte una experiencia de gestión financiera clara, segura y sin complicaciones.
+                        Controla tus ingresos y gastos con precisión, identifica hábitos de consumo, planifica de forma inteligente y toma decisiones informadas sobre tu economía personal.
+                    </p>
+                    
+                </div>
+
+                <!-- IMAGEN -->
+                <div class="col-md-6 text-center mt-5 mt-md-0">
+                    <img src="~/Content/Images/Captura de pantalla 2025-04-27 182204.png" alt="Gestión financiera" class="img-fluid rounded shadow" style="max-height: 400px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    <section class="cta-section text-center py-5 outline-style" id="cta">
+        <div class="container">
+            <h2 class="mb-4 text-black display-5">Empieza hoy mismo tu camino hacia la libertad financiera</h2>
+            <a href="@Url.Action("Register", "Account")" class="btn btn-primary btn-lg px-4">
+                Comenzar Gratis
+            </a>
+        </div>
+    </section>
+
+    <section class="cta-section text-center py-5 outline-style" id="caracteristicas">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Columna de texto -->
+                <div class="col-md-6">
+                    <h2 class="mb-4 text-black display-5">
+                        Vea sus gastos y encuentre maneras de ahorrar.<br>
+
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <h5><strong>Cada transacción, rastreada.</strong></h5>
+                            <p>Controle su flujo de efectivo en todas sus cuentas, para que los gastos no se escapen.</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h5><strong>Vea las transacciones de sus cuentas conectadas en un solo lugar.</strong></h5>
+                            <p>Controle su flujo de ingresos y gastos en su cuenta.</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h5><strong>Supervise las suscripciones, las tarifas y otros cambios.</strong></h5>
+                            <p>Obtenga seguimiento de un asesor financiero.</p>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("Register", "Account")" class="btn btn-primary btn-lg px-4">
+                        Comenzar Gratis
+                    </a>
+                </div>
+                <!-- Columna de imagen -->
+                <div class="col-md-6">
+                    <img src="https://images.unsplash.com/photo-1633409361618-c73427e4e206" alt="Imagen descriptiva" class="img-fluid rounded">
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <!-- CONTENIDO ADICIONAL -->
+
+    <section id="testimonios" class="py-5 outline-style">
+        <div class="container">
+            <h2 class="text-center mb-5">Lo que dicen nuestros usuarios</h2>
+            <div id="testimonialCarousel" class="carousel slide mx-auto" data-bs-ride="carousel" style="max-width: 800px;">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="card border-0 shadow-sm mx-auto" style="width: 90%; max-width: 350px;">
+                            <div class="card-body text-center p-5 testimonial-neumorph">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330" class="rounded-circle mb-4" width="80" height="80" alt="Usuario">
+                                <p class="lead">"TuPresupuesto cambió completamente la forma en que manejo mis finanzas."</p>
+                                <h5>María González</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card border-0 shadow-sm mx-auto" style="width: 90%; max-width: 350px;">
+                            <div class="card-body text-center p-5 testimonial-neumorph">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" class="rounded-circle mb-4" width="80" height="80" alt="Usuario">
+                                <p class="lead">"La mejor herramienta para gestionar mis gastos que he usado."</p>
+                                <h5>Carlos Rodríguez</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    
+
+    <section class="contact-section">
+        <div class="container">
+            <h2>Contáctanos</h2>
+            <p>Estamos aquí para ayudarte en cualquier consulta que tengas sobre nuestra plataforma TuPresupuesto.</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <h3>Email</h3>
+                    <p>Escríbenos si tienes preguntas o sugerencias.</p>
+                    <p><strong>Email:</strong> contacto@tupresupuesto.com</p>
+                </div>
+                <div class="col-md-4">
+                    <h3>Teléfono</h3>
+                    <p>¡Tu opinión es importante para nosotros!</p>
+                    <p><strong>Teléfono:</strong> +1234567890</p>
+                </div>
+                <div class="col-md-4">
+                    <h3>Dirección</h3>
+                    <p><strong>Ubicación:</strong> Calle Ficticia, Número 123, Ciudad Imaginaria</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-section text-center py-4">
+        <p>© 2025 TuPresupuesto. Todos los derechos reservados.</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Preguntas Frecuentes</a></li>
+            <li class="list-inline-item"><a href="#">Contacto</a></li>
+            <li class="list-inline-item"><a href="#">Acerca de Nosotros</a></li>
+            <li class="list-inline-item"><a href="#">Blog</a></li>
+        </ul>
+        <div class="social-media-links">
+            <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">X</a> | <a href="#">LinkedIn</a> | <a href="#">YouTube</a>
+        </div>
+        <div class="legal-links">
+            <a href="#">Descargo de responsabilidad legal</a> | <a href="#">Política de privacidad</a> | <a href="#">Términos y condiciones</a> | <a href="#">Cookies</a>
+        </div>
+    </footer>
+
+
+
+    <!-- FOOTER -->
+    <footer class="footer-section text-center py-4 bg-light mt-5">
+        <div class="container">
+            <p>© 2025 TuPresupuesto. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle con Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+

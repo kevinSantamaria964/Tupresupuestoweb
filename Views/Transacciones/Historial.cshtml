@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Historial de Movimientos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h2 class="text-center mb-4">📋 Historial de Transacciones</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Tipo</th>
+                <th>Categoría</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="table-success">
+                <td>Ingreso</td>
+                <td>Salario</td>
+                <td>$2.500.000</td>
+                <td>2025-04-01</td>
+                <td>Pago mensual</td>
+            </tr>
+            <tr class="table-danger">
+                <td>Gasto</td>
+                <td>Transporte</td>
+                <td>$150.000</td>
+                <td>2025-04-02</td>
+                <td>Recarga tarjeta</td>
+            </tr>
+            <tr class="table-danger">
+                <td>Gasto</td>
+                <td>Comida</td>
+                <td>$80.000</td>
+                <td>2025-04-03</td>
+                <td>Almuerzo con amigos</td>
+            </tr>
+            <tr class="table-success">
+                <td>Ingreso</td>
+                <td>Freelance</td>
+                <td>$400.000</td>
+                <td>2025-04-05</td>
+                <td>Proyecto web</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

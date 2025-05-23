@@ -1,0 +1,93 @@
+﻿@model Tupresupuestoweb.Repositories.Models.RegisterViewModel
+
+@{
+    ViewBag.Title = "Registro";
+}
+
+<main class="content px-3 py-5" style=" background: linear-gradient(to bottom, #6699ff, #7faeff, #a8c8ff, #8db8ff); min-height: 100vh; border-radius: 2rem; margin-top: 30px; /* Más cerca del borde superior */ ">
+
+    <div class="register-container" style="
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 2rem;
+    ">
+        <h2 class="register-title">Registro</h2>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">@ViewBag.Error</div>
+        }
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Username, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "Ingrese su usuario" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "Ingrese su correo" })
+            </div>
+
+            <!-- Contraseña -->
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+                <div style="position: relative;">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Ingrese su contraseña", id = "Password", style = "padding-right: 2.5rem;" })
+                    <span toggle="#Password" class="fa fa-eye-slash field-icon toggle-password"
+                          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #555;"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label" })
+                <div style="position: relative;">
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirme su contraseña", id = "ConfirmPassword", style = "padding-right: 2.5rem;" })
+                    <span toggle="#ConfirmPassword" class="fa fa-eye-slash field-icon toggle-password"
+                          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #555;"></span>
+                </div>
+            </div>
+
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.IdRol, "Selecciona tu rol", new { @class = "form-label" })
+                @Html.DropDownListFor(m => m.IdRol,
+                    new SelectList(new[] {
+                        new { Value = 2, Text = "Asesor Financiero" },
+                        new { Value = 3, Text = "Usuario Básico" }
+                    }, "Value", "Text"),
+                    "Seleccione un rol", // texto por defecto
+                    new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.IdRol, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="btn btn-primary ms-2">Registrarse</button>
+        }
+
+        <div class="forgot-password" style="margin-top: 1rem;">
+            <a href="@Url.Action("Login", "Account")">¿Ya tienes una cuenta? Inicia sesión.</a>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        // Mostrar/Ocultar contraseñas
+        $(".toggle-password").click(function () {
+            var input = $($(this).attr("toggle"));
+            var type = input.attr("type") === "password" ? "text" : "password";
+            input.attr("type", type);
+            $(this).toggleClass("fa-eye fa-eye-slash");
+        });
+
+    </script>
+}
+
+
+

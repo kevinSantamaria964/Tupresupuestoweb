@@ -1,0 +1,41 @@
+﻿@model List<Tupresupuestoweb.Repositories.Models.Usuario>
+@{
+    ViewBag.Title = "VerUsuariosAsignados";
+}
+
+<div class="mt-5">
+    <div class="card w-100">
+        <div class="card-header">
+            <h2 class="mb-0">👨‍💼 Usuarios Asignados</h2>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">Visualiza los usuarios registrados en el sistema</p>
+
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var usuario in Model)
+                        {
+                            <tr>
+                                <td>@usuario.Id</td>
+                                <td>@usuario.Nombre</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No se encontraron usuarios asignados.</p>
+            }
+        </div>
+    </div>
+</div>
+

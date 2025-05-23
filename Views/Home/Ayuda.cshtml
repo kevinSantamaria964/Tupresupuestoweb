@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Ayuda";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="ayuda-container">
+    <h2 class="ayuda-titulo">❓ Centro de Ayuda</h2>
+    <p class="ayuda-descripcion">Encuentra respuestas rápidas sobre el uso de <strong>TuPresupuesto</strong>.</p>
+
+    <div class="faq">
+        <h4>🔐 ¿Cómo puedo cambiar mi contraseña?</h4>
+        <p>Ve a tu <a href="@Url.Action("Perfil", "Account")">perfil</a> y haz clic en "Cambiar contraseña".</p>
+
+        <h4>🧾 ¿Cómo registro un nuevo gasto o ingreso?</h4>
+        <p>Desde el <a href="@Url.Action("Dashboard", "Home")">Dashboard</a>, puedes usar los botones "Agregar ingreso" o "Agregar gasto".</p>
+
+        <h4>🏷️ ¿Puedo personalizar mis categorías?</h4>
+        <p>Sí, ve a la sección de <a href="@Url.Action("Categorias", "Home")">Categorías</a> y crea nuevas o edita las existentes.</p>
+
+        <h4>📊 ¿Dónde veo mi resumen financiero?</h4>
+        <p>En el <a href="@Url.Action("ReporteMensual", "Home")">Reporte mensual</a>, verás tus ingresos, gastos y balance actual.</p>
+
+        <h4>📬 ¿Dónde puedo contactar soporte?</h4>
+        <p>Puedes escribirnos a <strong>soporte@tupresupuesto.com</strong> o usar el formulario de contacto (más adelante).</p>
+    </div>
+</div>
+
+

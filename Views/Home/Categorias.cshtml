@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Categorías";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="categorias-container">
+    <h2 class="categorias-title">🏷️ Categorías</h2>
+    <p class="categorias-sub">Organiza tus ingresos y gastos por tipo</p>
+
+    <!-- Botón para crear nueva categoría -->
+    <div style="margin-bottom: 30px;">
+        <a href="@Url.Action("Crear", "Categorias")" class="btn btn-success">➕ Nueva categoría</a>
+    </div>
+
+    <div class="categoria-grid">
+        <div class="categoria-card categoria-verde">
+            <span class="emoji">🍽️</span>
+            <h3>Alimentación</h3>
+        </div>
+        <div class="categoria-card categoria-azul">
+            <span class="emoji">🚗</span>
+            <h3>Transporte</h3>
+        </div>
+        <div class="categoria-card categoria-naranja">
+            <span class="emoji">🎓</span>
+            <h3>Educación</h3>
+        </div>
+        <div class="categoria-card categoria-rosa">
+            <span class="emoji">🏥</span>
+            <h3>Salud</h3>
+        </div>
+        <div class="categoria-card categoria-morado">
+            <span class="emoji">🎮</span>
+            <h3>Entretenimiento</h3>
+        </div>
+        <div class="categoria-card categoria-gris">
+            <span class="emoji">💼</span>
+            <h3>Otros</h3>
+        </div>
+    </div>
+</div>
+
